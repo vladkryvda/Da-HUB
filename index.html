@@ -4,28 +4,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hub</title>
-  <!-- Tailwind CSS for utility styling -->
+  <!-- Tailwind CSS for modern utility styling -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts for fine serif & sans serif styling -->
+  <!-- Google Fonts for fine minimalist typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
   
   <script>
     tailwind.config = {
       theme: {
         extend: {
           fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            sans: ['"Inter"', 'sans-serif'],
             serif: ['"Instrument Serif"', 'serif'],
           },
           colors: {
             paper: {
-              DEFAULT: '#FAF8F5', // Warm white / expensive paper base
-              card: '#FFFFFF',
-              border: '#EFEBE4',
-              text: '#2D2924',    // Soft dark brown/charcoal instead of harsh black
-              muted: '#7A746B'
+              DEFAULT: '#FAF8F5', // Soft warm alabaster
+              text: '#2D2924',    // Muted charcoal-bronze
+              muted: '#8A8379',   // Warm gray
+              border: '#E6E0D5'   // Very light warm-gray border
             }
           }
         }
@@ -37,80 +36,76 @@
       background-color: #FAF8F5;
       color: #2D2924;
     }
-    .transition-all-custom {
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    input::placeholder {
+      color: #A39C93 !important;
     }
   </style>
 </head>
-<body class="min-h-screen pt-20 pb-16 px-8 md:px-12 font-sans antialiased relative">
+<body class="min-h-screen pt-12 pb-24 px-8 md:px-16 font-sans antialiased relative selection:bg-paper-border">
 
-  <!-- Add Link Button (Positioned top-right) -->
-  <button onclick="toggleForm()" class="absolute top-6 right-8 md:right-12 transition-all-custom bg-[#EFEBE4] hover:bg-[#E5DFD4] text-paper-text px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 z-10">
-    <span class="text-xs">＋</span> Add Link
+  <!-- Minimalist Add Link Toggle (Plain text in top-right corner) -->
+  <button onclick="toggleForm()" class="absolute top-8 right-8 md:right-16 text-xs tracking-wider text-paper-muted hover:text-paper-text transition-colors duration-200">
+    + ADD SHORTCUT
   </button>
 
-  <div class="w-full">
+  <div class="max-w-6xl mx-auto">
     
-    <!-- Search / Filter Area (Left-aligned, max-width constrained for usability) -->
-    <div class="mb-12 max-w-md relative">
-      <input type="text" id="search" oninput="filterShortcuts()" placeholder="Search shortcuts..." class="w-full bg-paper-card text-paper-text px-4 py-3 border border-paper-border rounded-xl focus:outline-none focus:border-paper-muted transition-all-custom shadow-sm text-sm" />
-      <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-paper-muted pointer-events-none border border-paper-border px-1.5 py-0.5 rounded">/</span>
+    <!-- Ultra-minimal Search (Clean bottom line only) -->
+    <div class="mb-16 max-w-sm">
+      <input type="text" id="search" oninput="filterShortcuts()" placeholder="Search..." class="w-full bg-transparent text-paper-text pb-1 border-b border-paper-border focus:border-paper-text focus:outline-none transition-colors duration-300 text-sm tracking-wide font-light" />
     </div>
 
-    <!-- Inline Add Link Form (Expands to full width when active) -->
-    <div id="addFormContainer" class="hidden mb-12 p-6 bg-paper-card border border-paper-border rounded-xl transition-all-custom">
-      <h3 class="font-serif text-2xl italic mb-4">Add new shortcut</h3>
-      <form id="addLinkForm" onsubmit="addShortcut(event)" class="space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <!-- Minimal Form Drawer (Integrated, borderless layout) -->
+    <div id="addFormContainer" class="hidden mb-16 max-w-xl transition-all duration-300">
+      <form id="addLinkForm" onsubmit="addShortcut(event)" class="space-y-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
           <div>
-            <label class="block text-xs uppercase tracking-wider text-paper-muted font-medium mb-1">Title *</label>
-            <input type="text" id="title" required placeholder="Notion, GitHub, etc." class="w-full bg-paper px-3 py-2 text-sm border border-paper-border rounded-md focus:outline-none focus:border-paper-muted">
+            <label class="block text-[10px] uppercase tracking-widest text-paper-muted mb-1">Title *</label>
+            <input type="text" id="title" required placeholder="GitHub" class="w-full bg-transparent pb-1 text-sm border-b border-paper-border focus:outline-none focus:border-paper-text transition-colors">
           </div>
           <div>
-            <label class="block text-xs uppercase tracking-wider text-paper-muted font-medium mb-1">URL *</label>
-            <input type="url" id="url" required placeholder="https://..." class="w-full bg-paper px-3 py-2 text-sm border border-paper-border rounded-md focus:outline-none focus:border-paper-muted">
-          </div>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs uppercase tracking-wider text-paper-muted font-medium mb-1">Category</label>
-            <input type="text" id="category" placeholder="Work, Design, Personal..." class="w-full bg-paper px-3 py-2 text-sm border border-paper-border rounded-md focus:outline-none focus:border-paper-muted">
+            <label class="block text-[10px] uppercase tracking-widest text-paper-muted mb-1">URL *</label>
+            <input type="url" id="url" required placeholder="https://..." class="w-full bg-transparent pb-1 text-sm border-b border-paper-border focus:outline-none focus:border-paper-text transition-colors">
           </div>
           <div>
-            <label class="block text-xs uppercase tracking-wider text-paper-muted font-medium mb-1">Description</label>
-            <input type="text" id="description" placeholder="A brief reminder of what this is..." class="w-full bg-paper px-3 py-2 text-sm border border-paper-border rounded-md focus:outline-none focus:border-paper-muted">
+            <label class="block text-[10px] uppercase tracking-widest text-paper-muted mb-1">Category</label>
+            <input type="text" id="category" placeholder="Work" class="w-full bg-transparent pb-1 text-sm border-b border-paper-border focus:outline-none focus:border-paper-text transition-colors">
+          </div>
+          <div>
+            <label class="block text-[10px] uppercase tracking-widest text-paper-muted mb-1">Description</label>
+            <input type="text" id="description" placeholder="Optional description" class="w-full bg-transparent pb-1 text-sm border-b border-paper-border focus:outline-none focus:border-paper-text transition-colors">
           </div>
         </div>
-        <div class="flex justify-end gap-2 pt-2">
-          <button type="button" onclick="toggleForm()" class="px-4 py-2 text-xs font-medium text-paper-muted hover:text-paper-text transition-colors">Cancel</button>
-          <button type="submit" class="bg-paper-text text-paper-card px-4 py-2 text-xs font-medium rounded-md hover:opacity-90 transition-opacity">Save Shortcut</button>
+        <div class="flex items-center gap-4 pt-2">
+          <button type="submit" class="text-xs tracking-wider text-paper-text hover:opacity-75 transition-opacity font-medium">SAVE</button>
+          <span class="text-paper-border text-xs">/</span>
+          <button type="button" onclick="toggleForm()" class="text-xs tracking-wider text-paper-muted hover:text-paper-text transition-colors">CANCEL</button>
         </div>
       </form>
     </div>
 
-    <!-- Loading State -->
-    <div id="loading" class="text-center py-12">
-      <div class="inline-block animate-pulse text-sm text-paper-muted">Retrieving index...</div>
+    <!-- Quiet Loading Status -->
+    <div id="loading" class="py-4">
+      <div class="text-xs tracking-widest text-paper-muted font-light">INDEXING...</div>
     </div>
 
     <!-- Empty State -->
-    <div id="empty" class="hidden text-center py-12 border border-dashed border-paper-border rounded-xl">
-      <p class="text-sm text-paper-muted">No shortcuts found matching your criteria.</p>
+    <div id="empty" class="hidden py-8">
+      <p class="text-xs tracking-wide text-paper-muted font-light">No shortcuts found.</p>
     </div>
 
-    <!-- Shortcuts Grid (Grouped by Category, full-width grid layout) -->
-    <div id="grid" class="space-y-12"></div>
+    <!-- Harmonious Category Matrix -->
+    <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-12 gap-y-12"></div>
 
   </div>
 
   <script>
-    // --- CONFIGURATION ---
     // Paste your exact Google Apps Script Web App URL here:
     const API_URL = "https://script.google.com/macros/s/AKfycby3hjJHKNDr1ESQR74QnExLpmDXpimUj2MLVn9N7V2pFfluT1kmUUCqhecnTwD1PFvayA/exec";
     
     let allLinks = [];
 
-    // Keyboard shortcut for Search focus ("/")
+    // Focus search on "/" keypress
     window.addEventListener('keydown', (e) => {
       if (e.key === '/' && document.activeElement !== document.getElementById('search') && document.activeElement.tagName !== 'INPUT') {
         e.preventDefault();
@@ -118,32 +113,29 @@
       }
     });
 
-    // Toggle the "Add Link" Form
     function toggleForm() {
       const container = document.getElementById('addFormContainer');
       container.classList.toggle('hidden');
     }
 
-    // Fetch All Links from Google Sheet
+    // Fetch Links using a cache-busting timestamp parameter (?_t=...)
     async function loadLinks() {
       const loadingEl = document.getElementById('loading');
       const gridEl = document.getElementById('grid');
-      loadingEl.classList.remove('hidden');
-      gridEl.innerHTML = '';
-
+      
       try {
-        const response = await fetch(API_URL);
+        const response = await fetch(`${API_URL}?_t=${Date.now()}`);
         allLinks = await response.json();
         renderLinks(allLinks);
       } catch (err) {
         console.error("Error fetching data:", err);
-        gridEl.innerHTML = `<div class="text-red-800 text-sm">Could not load shortcuts. Please check your API URL configuration.</div>`;
+        gridEl.innerHTML = `<div class="text-xs text-red-800">Connection error. Check script configuration.</div>`;
       } finally {
         loadingEl.classList.add('hidden');
       }
     }
 
-    // Process and Group links by Category, then render in responsive columns
+    // Render categorized lists without heavy borders or cards
     function renderLinks(links) {
       const gridEl = document.getElementById('grid');
       const emptyEl = document.getElementById('empty');
@@ -156,7 +148,7 @@
         emptyEl.classList.add('hidden');
       }
 
-      // Group by category
+      // Group keys smoothly
       const categories = {};
       links.forEach(item => {
         const cat = item.category || 'General';
@@ -164,34 +156,34 @@
         categories[cat].push(item);
       });
 
-      // Generate HTML structure
+      // Render clean typographic sections
       for (const [category, items] of Object.entries(categories)) {
-        const section = document.createElement('section');
-        section.className = 'animate-fade-in';
+        const section = document.createElement('div');
+        section.className = 'flex flex-col space-y-4';
         
         let headerHtml = `
-          <h2 class="text-xs uppercase tracking-widest text-paper-muted font-semibold mb-4 flex items-center gap-2">
-            <span>●</span> ${category}
+          <h2 class="text-xs font-medium tracking-widest text-paper-muted uppercase border-b border-paper-border pb-1.5">
+            ${category}
           </h2>
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          <div class="space-y-3 flex flex-col">
         `;
 
-        let cardsHtml = items.map(item => `
-          <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="group block p-5 bg-paper-card border border-paper-border rounded-xl transition-all-custom hover:-translate-y-0.5 hover:shadow-md hover:border-[#D0C9BE] text-left">
-            <div class="flex items-center justify-between">
-              <span class="font-medium text-sm group-hover:text-paper-muted transition-colors">${item.title}</span>
-              <svg class="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-all-custom transform translate-x-1 translate-y-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"/></svg>
+        let linksHtml = items.map(item => `
+          <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="group block text-left">
+            <div class="flex items-baseline justify-between gap-2">
+              <span class="text-[13px] font-medium text-paper-text group-hover:text-paper-muted transition-colors duration-150 decoration-paper-border underline-offset-4">
+                ${item.title}
+              </span>
             </div>
-            ${item.description ? `<p class="text-xs text-paper-muted mt-2 font-light leading-relaxed">${item.description}</p>` : ''}
+            ${item.description ? `<span class="text-[11px] block text-paper-muted font-light leading-snug mt-0.5">${item.description}</span>` : ''}
           </a>
         `).join('');
 
-        section.innerHTML = headerHtml + cardsHtml + '</div>';
+        section.innerHTML = headerHtml + linksHtml + '</div>';
         gridEl.appendChild(section);
       }
     }
 
-    // Filter shortcuts by Search Input
     function filterShortcuts() {
       const query = document.getElementById('search').value.toLowerCase();
       const filtered = allLinks.filter(item => 
@@ -202,47 +194,49 @@
       renderLinks(filtered);
     }
 
-    // Send Form Data to the Google Sheets backend
+    // Dynamic, Optimistic Background Upload Sync
     async function addShortcut(event) {
       event.preventDefault();
-      const btn = event.target.querySelector('button[type="submit"]');
-      const originalText = btn.innerText;
-      btn.innerText = "Saving...";
-      btn.disabled = true;
 
-      const payload = {
-        title: document.getElementById('title').value,
-        url: document.getElementById('url').value,
-        category: document.getElementById('category').value || 'General',
-        description: document.getElementById('description').value
-      };
+      const title = document.getElementById('title').value;
+      const url = document.getElementById('url').value;
+      const category = document.getElementById('category').value || 'General';
+      const description = document.getElementById('description').value;
+
+      const newShortcut = { title, url, category, description };
+
+      // OPTIMISTIC UPDATE: Project instantly to UI
+      allLinks.push(newShortcut);
+      renderLinks(allLinks);
+
+      // Clean inputs immediately
+      document.getElementById('addLinkForm').reset();
+      toggleForm();
 
       try {
-        const response = await fetch(API_URL, {
+        // Post write to sheet in background
+        await fetch(API_URL, {
           method: "POST",
           mode: "no-cors",
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(newShortcut)
         });
 
-        // Clear Form inputs
-        document.getElementById('addLinkForm').reset();
-        toggleForm();
-        
-        // Reload dashboard
-        loadLinks();
+        // Background fetch 1.5 seconds later with cache-busting to perfectly align states
+        setTimeout(async () => {
+          const syncResponse = await fetch(`${API_URL}?_t=${Date.now()}`);
+          allLinks = await syncResponse.json();
+          renderLinks(allLinks);
+        }, 1500);
+
       } catch (err) {
-        console.error("Error submitting link:", err);
-        alert("There was an error saving the link. Please check your setup.");
-      } finally {
-        btn.innerText = originalText;
-        btn.disabled = false;
+        console.error("Database alignment failed:", err);
       }
     }
 
-    // Initial Load
+    // Load initial collection
     loadLinks();
   </script>
 </body>
