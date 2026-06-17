@@ -100,7 +100,7 @@
   </div>
 
   <script>
-    // Paste your exact Google Apps Script Web App URL here:
+    // Configured directly with your new deployment URL
     const API_URL = "https://script.google.com/macros/s/AKfycbyO2qzFd-XdmCdEwn_aOaPLciswtoE27cm4e2hST6uA6XMPrbdlZWhrNfNZ87RxM4k8Sg/exec";
     
     let allLinks = [];
@@ -116,6 +116,15 @@
     function toggleForm() {
       const container = document.getElementById('addFormContainer');
       container.classList.toggle('hidden');
+    }
+
+    // Helper to safely pull domain names from URLs to fetch favicons
+    function getDomain(url) {
+      try {
+        return new URL(url).hostname;
+      } catch (e) {
+        return '';
+      }
     }
 
     // Fetch Links using a cache-busting timestamp parameter (?_t=...)
@@ -135,7 +144,7 @@
       }
     }
 
-    // Render categorized lists without heavy borders or cards
+    // Render categorized lists with minimalist icons
     function renderLinks(links) {
       const gridEl = document.getElementById('grid');
       const emptyEl = document.getElementById('empty');
@@ -168,16 +177,27 @@
           <div class="space-y-3 flex flex-col">
         `;
 
-        let linksHtml = items.map(item => `
-          <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="group block text-left">
-            <div class="flex items-baseline justify-between gap-2">
-              <span class="text-[13px] font-medium text-paper-text group-hover:text-paper-muted transition-colors duration-150 decoration-paper-border underline-offset-4">
-                ${item.title}
-              </span>
-            </div>
-            ${item.description ? `<span class="text-[11px] block text-paper-muted font-light leading-snug mt-0.5">${item.description}</span>` : ''}
-          </a>
-        `).join('');
+        let linksHtml = items.map(item => {
+          const domain = getDomain(item.url);
+          const faviconUrl = domain ? `https://www.google.com/s2/favicons?sz=32&domain=${domain}` : '';
+
+          return `
+            <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="group block text-left">
+              <div class="flex items-center gap-2">
+                ${faviconUrl ? `
+                  <img src="${faviconUrl}" 
+                       class="w-3.5 h-3.5 rounded-sm object-contain opacity-80 group-hover:opacity-100 transition-opacity duration-150" 
+                       alt="" 
+                       onerror="this.style.display='none'">
+                ` : ''}
+                <span class="text-[13px] font-medium text-paper-text group-hover:text-paper-muted transition-colors duration-150 decoration-paper-border underline-offset-4">
+                  ${item.title}
+                </span>
+              </div>
+              ${item.description ? `<span class="text-[11px] block text-paper-muted font-light leading-snug mt-1 pl-5">${item.description}</span>` : ''}
+            </a>
+          `;
+        }).join('');
 
         section.innerHTML = headerHtml + linksHtml + '</div>';
         gridEl.appendChild(section);
