@@ -102,6 +102,7 @@
   <script>
     // Configured directly with your new deployment URL
     const API_URL = "https://script.google.com/macros/s/AKfycbyO2qzFd-XdmCdEwn_aOaPLciswtoE27cm4e2hST6uA6XMPrbdlZWhrNfNZ87RxM4k8Sg/exec";
+    const CACHE_KEY = "hub_shortcuts_cache";
     
     let allLinks = [];
 
@@ -127,18 +128,36 @@
       }
     }
 
-    // Fetch Links using a cache-busting timestamp parameter (?_t=...)
+    // Fetch Links using a cache-busting timestamp parameter, with local storage fallback
     async function loadLinks() {
       const loadingEl = document.getElementById('loading');
       const gridEl = document.getElementById('grid');
       
+      // Load from localStorage immediately if available
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (cached) {
+        try {
+          allLinks = JSON.parse(cached);
+          renderLinks(allLinks);
+          loadingEl.classList.add('hidden'); // Hide loading indicator as we have cached data
+        } catch (e) {
+          console.error("Error reading cache:", e);
+        }
+      }
+
       try {
         const response = await fetch(`${API_URL}?_t=${Date.now()}`);
         allLinks = await response.json();
+        
+        // Save to cache
+        localStorage.setItem(CACHE_KEY, JSON.stringify(allLinks));
         renderLinks(allLinks);
       } catch (err) {
         console.error("Error fetching data:", err);
-        gridEl.innerHTML = `<div class="text-xs text-red-800">Connection error. Check script configuration.</div>`;
+        // If there is no cached data and the fetch fails, show the connection error
+        if (allLinks.length === 0) {
+          gridEl.innerHTML = `<div class="text-xs text-red-800">Connection error. Check script configuration.</div>`;
+        }
       } finally {
         loadingEl.classList.add('hidden');
       }
@@ -214,7 +233,7 @@
       renderLinks(filtered);
     }
 
-    // Dynamic, Optimistic Background Upload Sync
+    // Dynamic, Optimistic Background Upload Sync with Local Storage Updates
     async function addShortcut(event) {
       event.preventDefault();
 
@@ -225,8 +244,9 @@
 
       const newShortcut = { title, url, category, description };
 
-      // OPTIMISTIC UPDATE: Project instantly to UI
+      // OPTIMISTIC UPDATE: Project instantly to memory, UI, and local cache
       allLinks.push(newShortcut);
+      localStorage.setItem(CACHE_KEY, JSON.stringify(allLinks));
       renderLinks(allLinks);
 
       // Clean inputs immediately
@@ -244,20 +264,12 @@
           body: JSON.stringify(newShortcut)
         });
 
-        // Background fetch 1.5 seconds later with cache-busting to perfectly align states
+        // Background fetch 1.5 seconds later with cache-busting to align states and update the cache
         setTimeout(async () => {
-          const syncResponse = await fetch(`${API_URL}?_t=${Date.now()}`);
-          allLinks = await syncResponse.json();
-          renderLinks(allLinks);
-        }, 1500);
-
-      } catch (err) {
-        console.error("Database alignment failed:", err);
-      }
-    }
-
-    // Load initial collection
-    loadLinks();
-  </script>
-</body>
-</html>
+          try {
+            const syncResponse = await fetch(`${API_URL}?_t=${Date.now()}`);
+            allLinks = await syncResponse.json();
+            localStorage.setItem(CACHE_KEY, JSON.stringify(allLinks));
+            renderLinks(allLinks);
+          } catch (syncErr) {
+            consol
