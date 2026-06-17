@@ -272,4 +272,17 @@
             localStorage.setItem(CACHE_KEY, JSON.stringify(allLinks));
             renderLinks(allLinks);
           } catch (syncErr) {
-            consol
+            console.error("Background sync failed:", syncErr);
+          }
+        }, 1500);
+
+      } catch (err) {
+        console.error("Database alignment failed:", err);
+      }
+    }
+
+    // Load initial collection
+    loadLinks();
+  </script>
+</body>
+</html>
